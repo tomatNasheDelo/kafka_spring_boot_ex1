@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Сообщение отправлено</title>
+</head>
+<body>
+<h1>Сообщение отправлено</h1>
+<p>Топик: <strong th:text="${topic}"></strong></p>
+<p>Сообщение: <span th:text="${message}"></span></p>
+<a th:href="@{/}">Отправить ещё</a>
+</body>
+</html>

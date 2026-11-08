@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Отправка сообщения в Kafka</title>
+</head>
+<body>
+<h1>Отправить сообщение</h1>
+<p th:if="${error}" th:text="${error}" style="color: red"></p>
+<form th:action="@{/messages}" th:object="${messageForm}" method="post">
+    <label for="message">Сообщение:</label><br>
+    <textarea id="message" th:field="*{message}" rows="5" cols="50" required></textarea><br><br>
+    <button type="submit">Отправить в Kafka</button>
+</form>
+</body>
+</html>

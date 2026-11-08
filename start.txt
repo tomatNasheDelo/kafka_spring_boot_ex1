@@ -1,0 +1,64 @@
+# Демо: Spring Boot + Kafka из двух микросервисов
+
+Небольшой учебный проект: веб-сервис принимает сообщение через форму Thymeleaf и POST-запрос, публикует его в Kafka; отдельный сервис читает топик и печатает сообщение в консоль.
+
+## Технологии
+
+- Java 17 и Spring Boot 3.4.3
+- Gradle с Kotlin DSL (`build.gradle.kts`)
+- Spring Web MVC и Thymeleaf — форма и обработка `POST /messages`
+- Spring for Apache Kafka — публикация и чтение строковых сообщений
+- Apache Kafka 3.9 в режиме KRaft, запускаемая через Docker Compose
+
+Топик приложения: `demo-messages`. Kafka автоматически создаёт его при первой отправке.
+
+## Требования
+
+- JDK 17+
+- Docker с Docker Compose plugin
+- Gradle не нужен отдельно: используйте Gradle Wrapper, если он имеется в клоне; иначе команды `gradle` требуют установленный Gradle 8.x.
+
+## Запуск
+
+Все команды выполняются из корня проекта.
+
+1. Запустите Kafka и дождитесь её готовности:
+
+   ```bash
+   docker compose up -d kafka
+   docker compose ps
+   ```
+
+2. В первом терминале запустите сервис-получатель (он выводит сообщения в консоль):
+
+   ```bash
+   gradle :consumer:bootRun
+   ```
+
+3. Во втором терминале запустите веб-сервис:
+
+   ```bash
+   gradle :producer:bootRun
+   ```
+
+4. Откройте `http://localhost:8080`, введите текст и отправьте форму. После POST-запроса веб-сервис опубликует текст в Kafka. Он появится в терминале сервиса-получателя.
+
+Можно отправить сообщение напрямую, без браузера:
+
+```bash
+curl -X POST http://localhost:8080/messages \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'message=Привет из curl'
+```
+
+Сервисы по умолчанию подключаются к `localhost:9092`. Для другого адреса брокера задайте `KAFKA_BOOTSTRAP_SERVERS`, например `KAFKA_BOOTSTRAP_SERVERS=localhost:9092`.
+
+## Остановка
+
+Остановите оба Spring Boot процесса сочетанием `Ctrl+C`, затем удалите Kafka-контейнер:
+
+```bash
+docker compose down
+```
+
+Чтобы также удалить сохранённые данные Kafka, используйте `docker compose down -v`.
